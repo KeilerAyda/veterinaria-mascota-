@@ -15,47 +15,49 @@ import org.hibernate.Transaction;
  */
 public class MascotaDao implements IMascota{
 
-    @Override
-    public void guardarMascota(Mascota mascota) {
-        //construir una nueva session y una nueva transaction
-        
-        Session session =HibernateUtil.geSessionFactory().openSession();
-        Transaction transaction=session.beginTransaction();
-        //Registar en la base de datos de mascota
+  @Override
+    public boolean guardarMascota(Mascota mascota) {
+        //Construir una nueva session y una nueva transaccion
+        boolean respuesta = true;
+         Session sesion =HibernateUtil.geSessionFactory().openSession();
+        Transaction transaccion = sesion.beginTransaction();
+        //Rgistrar en la base de datos la mascota
+
         try {
-            session.save(mascota);
-             transaction.commit();
+            sesion.save(mascota);
+            transaccion.commit();
         } catch (Exception e) {
-            
+            respuesta = false;
         }
-       
-        session.close();
-        
+
+        sesion.close();
+        return respuesta;
     }
+        
+    
 
     @Override
-    public ArrayList<Mascota> listarMascota(Session sesion) {
-          ArrayList<Mascota> milista=new ArrayList<>();
-        Query query=sesion.createQuery("FROM Mascota");
-        //ejecutar la consulta y obtener la listas
-        milista=(ArrayList<Mascota>) query.list();
+  public ArrayList<Mascota> listarMascota() {
+        Session session =HibernateUtil.geSessionFactory().openSession();
+        ArrayList<Mascota> milista = new ArrayList<>();
+        Query query = session.createQuery("from Mascota");
+        milista = (ArrayList<Mascota>)query.list();
         return milista;
     }
 
     @Override
     public boolean actualizar(Mascota mascota) {
+        boolean respuesta=true;
         Session session =HibernateUtil.geSessionFactory().openSession();
          Transaction transaction=session.beginTransaction();
-          boolean update=false;
-          int res = 0;
-        session.update(mascota);
-         if(res==1){
-                 update=true; 
-              }
-          transaction.commit();
-        session.close();
-         
-     return update;
+          try{
+              session.update(mascota);
+              transaction.commit();
+          }catch(Exception e){
+              respuesta=false;
+          }
+          session.close();
+          return respuesta;
     }
 
     @Override
@@ -85,8 +87,21 @@ public class MascotaDao implements IMascota{
         
     }
 
-  
+  @Override
+   public boolean eliminar(Mascota mascota) {
+      boolean respuesta=true;
+       Session sesion =HibernateUtil.geSessionFactory().openSession();
+     Transaction transaction=sesion.beginTransaction();
+      try{
+          sesion.delete(mascota);
+          transaction.commit();
+      }catch(Exception E){
+          respuesta=false;
+      }
+      sesion.close();
+      return respuesta;
     }
+}
 
 
    

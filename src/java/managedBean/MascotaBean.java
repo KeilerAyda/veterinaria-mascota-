@@ -1,60 +1,66 @@
-
 package managedBean;
 
 import Dao.MascotaDao;
 import entidades.Mascota;
 import java.util.ArrayList;
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
 
 /**
  *
  * @author USUARIO
  */
- @ManagedBean
+@ManagedBean
 @ViewScoped
 
 public class MascotaBean {
-  //Stributos 
- private Mascota mascota;
+    //Stributos 
+
+    private Mascota mascota;
+
     /**
      * Creates a new instance of MascotaBean
      */
     public MascotaBean() {
-        this.mascota=new Mascota();
-          }
-  
-    
-     public void guardarMascota(){
- 
-    
-         try {
-              MascotaDao mascotadao= new MascotaDao ();
-              mascotadao.guardarMascota(mascota);
-         } catch (Exception e) {
-             System.out.println("error"+e);
-         }
-         
-     }
-     public boolean actualizarMascota(Mascota mascota){
-  
-      boolean respuesta = true;
-         try {
-        MascotaDao mascotadao= new MascotaDao ();
-        mascotadao.actualizar(mascota);
-         } catch (Exception e) {
-            respuesta = false; 
-         }
-       return respuesta;
-     }
-      public ArrayList<Mascota> listarMascota(){
-      ArrayList<Mascota> lista = new ArrayList<>();
-      MascotaDao mascotadao= new MascotaDao ();
-    // lista = mascotadao.listarMascota(session);
-     return lista;
-  }
-        
-        public Mascota getMascota() {
+        this.mascota = new Mascota();
+    }
+
+    public String guardar() {
+        MascotaDao dao = new MascotaDao();
+        boolean respuesta = dao.guardarMascota(mascota);
+        if (respuesta) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "asdsd", "qweqwe"));
+        } else {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Error", "No se pudo registrar"));
+        }
+        return "/index";
+
+    }
+
+    public String actualizarMascota() {
+
+        MascotaDao mascotadao = new MascotaDao();
+        boolean respuesta = mascotadao.actualizar(mascota);
+        if (respuesta) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "asdsd", "qweqwe"));
+
+        } else {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Error", "No se pudo registrar"));
+        }
+
+        return "/index";
+    }
+
+    public ArrayList<Mascota> listar() {
+        ArrayList<Mascota> milista = new ArrayList<>();
+        MascotaDao dao = new MascotaDao();
+        milista = dao.listarMascota();
+        return milista;
+    }
+
+    public Mascota getMascota() {
         return mascota;
     }
 
@@ -62,5 +68,20 @@ public class MascotaBean {
         this.mascota = mascota;
     }
 
-}   
+    public String limpiar() {
+        return "/index.xhtml";
 
+    }
+
+    public String eliminar(Mascota mascotas) {
+        MascotaDao DAO = new MascotaDao();
+        boolean respuesta = DAO.eliminar(mascotas);
+        if (respuesta) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "asdsd", "qweqwe"));
+        } else {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Error", "No se pudo registrar"));
+        }
+        return "/index";
+
+    }
+}
